@@ -265,3 +265,4 @@ export function Component() {
 }
 
 Component.displayName = "WatchPage";
+export default Component;
