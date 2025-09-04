@@ -294,6 +294,25 @@ export default function DetailModal() {
                             >
                                 <CloseIcon sx={{ color: "white", fontSize: { xs: 14, sm: 22 } }} />
                             </IconButton>
+                            {soundSrc && (
+                                <IconButton
+                                    onClick={() => sound.toggle(soundSrc)}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 15,
+                                        right: { xs: 44, sm: 64 },
+                                        bgcolor: "#181818",
+                                        width: { xs: 22, sm: 40 },
+                                        height: { xs: 22, sm: 40 },
+                                    }}
+                                >
+                                    {!sound.muted ? (
+                                        <VolumeUpIcon sx={{ color: "white", fontSize: { xs: 14, sm: 22 } }} />
+                                    ) : (
+                                        <VolumeOffIcon sx={{ color: "white", fontSize: { xs: 14, sm: 22 } }} />
+                                    )}
+                                </IconButton>
+                            )}
 
                             {/* — Başlık + aksiyonlar; ratio kutusunun ALT kenarına sabit — */}
                             <Box sx={{ position: "absolute", left: 0, right: 0, bottom: 16, px: { xs: 2, sm: 3, md: 5 } }}>
@@ -324,13 +343,6 @@ export default function DetailModal() {
                                         }}
                                     >
                                         {counters.liked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
-                                    </NetflixIconButton>
-
-                                    <NetflixIconButton
-                                        onClick={() => { if (soundSrc) sound.toggle(soundSrc); }}
-                                        sx={{ borderColor: "grey.700" }}
-                                    >
-                                        {!sound.muted ? <VolumeUpIcon /> : <VolumeOffIcon />}
                                     </NetflixIconButton>
 
 

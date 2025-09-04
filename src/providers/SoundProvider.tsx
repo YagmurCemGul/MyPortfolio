@@ -47,10 +47,9 @@ export default function SoundProvider({ children }: { children: React.ReactNode 
     if (muted || currentSrc !== src) {
       try {
         setMuted(false);
-        if (currentSrc !== src) {
-          setCurrentSrc(src);
-          a.src = src;
-        }
+        // Her durumda kaynağı güncelle ki baştan başlasın
+        setCurrentSrc(src);
+        a.src = src;
         a.currentTime = 0;
         a.play().catch(() => {});
       } catch {}
@@ -64,4 +63,3 @@ export default function SoundProvider({ children }: { children: React.ReactNode 
   const value = useMemo<SoundCtx>(() => ({ muted, currentSrc, toggle, stop }), [muted, currentSrc, toggle, stop]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
-

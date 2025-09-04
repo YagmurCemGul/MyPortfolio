@@ -11,6 +11,8 @@ import Player from "video.js/dist/types/player";
 import { getRandomNumber } from "src/utils/common";
 import MaxLineTypography from "./MaxLineTypography";
 import PlayButton from "./PlayButton";
+import Button from "@mui/material/Button";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import MoreInfoButton from "./MoreInfoButton";
 import NetflixIconButton from "./NetflixIconButton";
 import MaturityRate from "./MaturityRate";
@@ -266,13 +268,24 @@ export default function TopTrailer({ mediaType, heroImageUrl, heroTitle, heroTex
                         {computedText}
                     </MaxLineTypography>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                      <PlayButton appearance="hero" label="Resume" href="https://drive.google.com/file/d/1Hgc63RAADimxVNR5J9G2Olh3kuhESCYx/view?usp=drive_link" size="large" />
-                      {video && (
-                          <MoreInfoButton
-                              size="large"
-                              onClick={() => setDetailType({ mediaType, id: video.id })}
-                          />
-                      )}
+                    <PlayButton appearance="hero" label="Resume" href="https://drive.google.com/file/d/1Hgc63RAADimxVNR5J9G2Olh3kuhESCYx/view?usp=drive_link" size="large" />
+                    <Button
+                      variant="outlined"
+                      color="inherit"
+                      startIcon={<LinkedInIcon />}
+                      href="https://www.linkedin.com/in/yagmurcemgul"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ color: 'common.white', borderColor: 'rgba(255,255,255,0.85)' }}
+                    >
+                      LinkedIn
+                    </Button>
+                    {video && (
+                      <MoreInfoButton
+                        size="large"
+                        onClick={() => setDetailType({ mediaType, id: video.id })}
+                      />
+                    )}
                   </Stack>
                 </Stack>
               </Box>
