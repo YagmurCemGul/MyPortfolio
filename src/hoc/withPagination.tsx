@@ -27,7 +27,8 @@ export default function withPagination(
 ) {
     return function WithPagination(props: WithPaginationProps) {
         const { itemsOverride, textOverrides, ...rest } = props;
-        const bypass = !!itemsOverride && itemsOverride.length > 0;
+        // Eğer itemsOverride varsa ya da yalnızca textOverrides ile çalışmak istiyorsak fetch'i atla
+        const bypass = (!!itemsOverride && itemsOverride.length > 0) || (!!textOverrides && textOverrides.length > 0);
 
         const dispatch = useAppDispatch();
         const itemKey = (genre as any).id ?? (genre as CustomGenre).apiString;
@@ -108,8 +109,20 @@ export default function withPagination(
 
         const syntheticData = useMemo(() => {
             if (!bypass) return undefined;
-            return { page: 1, total_pages: 1, results: itemsOverride } as any;
-        }, [bypass, itemsOverride]);
+            // itemsOverride öncelikli; yoksa textOverrides'tan minimal base sonuç üret
+            if (itemsOverride && itemsOverride.length > 0) {
+                return { page: 1, total_pages: 1, results: itemsOverride } as any;
+            }
+            const base = (textOverrides ?? []).map((ov) => ({
+                backdrop_path: ov.backdrop_path ?? "",
+                title: ov.title ?? "",
+                name: ov.title ?? "",
+                overview: ov.overview ?? "",
+                release_date: ov.release_date,
+                vote_average: ov.vote_average,
+            }));
+            return { page: 1, total_pages: 1, results: base } as any;
+        }, [bypass, itemsOverride, textOverrides]);
 
         if (bypass && syntheticData) {
             const finalData = applyTextOverrides(syntheticData);
