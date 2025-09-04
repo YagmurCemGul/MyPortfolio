@@ -87,7 +87,7 @@ export default function IntroPage() {
       <audio ref={audioRef} src="/assets/netflix-sound.mp3" preload="auto" playsInline />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/assets/netflix-logo.png"
+        src="/assets/netflix.svg"
         alt="Intro Logo"
         className={`${styles.logo} ${clicked ? styles.animate : ''}`}
       />
