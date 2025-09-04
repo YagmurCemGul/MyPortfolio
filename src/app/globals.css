@@ -1,8 +1,21 @@
+
+/*src/app/globals.css*/
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
+
+    /* 👇 EKLE: Editor/LSP uyarılarını susturan fallback’ler */
+    --font-geist-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+html, body {
+    min-height: 100%;
+    /* background: #141414; */
+    color-scheme: dark;
 }
 
 @theme inline {
@@ -13,14 +26,61 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        /* --background: #0a0a0a; */
+        --foreground: #ededed;
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    /* background: var(--background); */
+    color: var(--foreground);
+    font-family: var(--font-geist-sans);
 }
+
+
+/* === NAV THEME (tek noktadan yönetim) === */
+:root {
+    /* Renkler */
+    --nav-base: #000000;        /* nav kapsülü ve logo zemini */
+    --nav-pill-bg: #ffffff;     /* buton/kapsül zemini */
+    --nav-pill-text: #000000;   /* kapsül metni */
+    --nav-hover-text: #ffffff;  /* hover anındaki metin */
+
+    /* Boyutlar */
+    --nav-height: 42px;
+    --nav-pill-pad-x: 18px;
+    --nav-gap: 3px;
+
+    /* Yazı tipi */
+    --nav-font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+    --nav-font-size: 16px;
+    --nav-font-weight: 600;
+}
+
+/* İsteğe bağlı: koyu/açık tema varyantı */
+[data-theme="dark"] {
+    --nav-base: #000000;
+    --nav-pill-bg: #ffffff;
+    --nav-pill-text: #000000;
+    --nav-hover-text: #ffffff;
+}
+[data-theme="light"] {
+    --nav-base: #ffffff;
+    --nav-pill-bg: #0a0a0a;
+    --nav-pill-text: #ffffff;
+    --nav-hover-text: #ffffff;
+}
+
+/* PillNav.css’in beklediği isimlere map et (değişiklik gerektirmeden çalışsın) */
+:root {
+    --base: var(--nav-base);
+    --pill-bg: var(--nav-pill-bg);
+    --pill-text: var(--nav-pill-text);
+    --hover-text: var(--nav-hover-text);
+
+    --nav-h: var(--nav-height);
+    --pill-pad-x: var(--nav-pill-pad-x);
+    --pill-gap: var(--nav-gap);
+}
+html, body { background-color: #141414 !important; }
