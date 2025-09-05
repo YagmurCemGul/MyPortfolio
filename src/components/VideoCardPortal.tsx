@@ -26,6 +26,7 @@ import AgeLimitChip from "./AgeLimitChip";
 import QualityChip from "./QualityChip";
 import GenreBreadcrumbs from "./GenreBreadcrumbs";
 import { useGetConfigurationQuery } from "src/store/slices/configuration";
+import { getPlayLinkForTitle } from "src/utils/links";
 import { MEDIA_TYPE } from "src/types/Common";
 import { useSound } from "src/providers/SoundProvider";
 import { getSoundForTitle } from "src/utils/sounds";
@@ -64,7 +65,7 @@ export default function VideoCardPortal({ video, anchorElement }: VideoCardModal
         : `${configuration?.images.base_url ?? ""}w780${rawBackdrop}`;
 
     // Play link: match modal's href behavior
-    const playHref = (video as any)?.href as string | undefined;
+    const playHref = getPlayLinkForTitle(video.title, (video as any)?.href);
     const isExternalPlay = !!playHref && /^(https?:)?\/\//i.test(playHref);
 
     const sound = useSound();
@@ -172,11 +173,8 @@ export default function VideoCardPortal({ video, anchorElement }: VideoCardModal
                             onClick={(e) => {
                                 e.stopPropagation();
                                 if (!playHref || playHref === "#") return;
-                                if (isExternalPlay) {
-                                    window.open(playHref, "_blank", "noopener,noreferrer");
-                                } else {
-                                    router.push(playHref.startsWith("/") ? playHref : `/${playHref}`);
-                                }
+                                const url = isExternalPlay ? playHref : (playHref.startsWith("/") ? playHref : `/${playHref}`);
+                                window.open(url, "_blank", "noopener,noreferrer");
                             }}
                         >
                             <PlayCircleIcon sx={{ width: 40, height: 40 }} />

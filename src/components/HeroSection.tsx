@@ -266,7 +266,7 @@ export default function TopTrailer({ mediaType, heroImageUrl, heroTitle, heroTex
                         {computedText}
                     </MaxLineTypography>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                      <PlayButton appearance="hero" label="Resume" href="https://drive.google.com/file/d/1Hgc63RAADimxVNR5J9G2Olh3kuhESCYx/view?usp=drive_link" size="large" />
+                      <PlayButton appearance="hero" label="Resume" href="https://drive.google.com/file/d/1Hgc63RAADimxVNR5J9G2Olh3kuhESCYx/view?usp=drive_link" newTab size="large" />
                       {video && (
                           <MoreInfoButton
                               size="large"

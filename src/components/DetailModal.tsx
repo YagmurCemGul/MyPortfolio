@@ -36,6 +36,7 @@ import Image from "next/image";
 
 
 import { loadCounters, saveCounters, CardCounters } from "src/utils/userCounters";
+import { getPlayLinkForTitle } from "src/utils/links";
 import { useSound } from "src/providers/SoundProvider";
 import { getSoundForTitle } from "src/utils/sounds";
 
@@ -81,7 +82,7 @@ export default function DetailModal() {
     useEffect(() => setExpanded(false), [displayTitle]);
     
     const rawHref = detail.override?.href;
-    const playHref = typeof rawHref === "string" && rawHref.trim() !== "" ? rawHref : undefined;
+    const playHref = getPlayLinkForTitle(displayTitle, rawHref);
 
     const [counters, setCounters] = useState<CardCounters>({
         liked: false,
@@ -235,6 +236,7 @@ export default function DetailModal() {
             scroll="body"
             maxWidth="md"
             open={isOpen}
+            onClose={() => { try { (sound as any).stop?.(); } catch {} setDetailType({}); }}
             TransitionComponent={Transition}
         >
             <DialogContent sx={{ p: 0, bgcolor: "#181818" }}>
@@ -282,7 +284,7 @@ export default function DetailModal() {
 
                             {/* — Kapat butonu — */}
                             <IconButton
-                                onClick={() => setDetailType({})}
+                                onClick={() => { sound.stop(); setDetailType({}); }}
                                 sx={{
                                     position: "absolute",
                                     top: 15,
@@ -294,25 +296,6 @@ export default function DetailModal() {
                             >
                                 <CloseIcon sx={{ color: "white", fontSize: { xs: 14, sm: 22 } }} />
                             </IconButton>
-                            {soundSrc && (
-                                <IconButton
-                                    onClick={() => sound.toggle(soundSrc)}
-                                    sx={{
-                                        position: "absolute",
-                                        top: 15,
-                                        right: { xs: 44, sm: 64 },
-                                        bgcolor: "#181818",
-                                        width: { xs: 22, sm: 40 },
-                                        height: { xs: 22, sm: 40 },
-                                    }}
-                                >
-                                    {!sound.muted ? (
-                                        <VolumeUpIcon sx={{ color: "white", fontSize: { xs: 14, sm: 22 } }} />
-                                    ) : (
-                                        <VolumeOffIcon sx={{ color: "white", fontSize: { xs: 14, sm: 22 } }} />
-                                    )}
-                                </IconButton>
-                            )}
 
                             {/* — Başlık + aksiyonlar; ratio kutusunun ALT kenarına sabit — */}
                             <Box sx={{ position: "absolute", left: 0, right: 0, bottom: 16, px: { xs: 2, sm: 3, md: 5 } }}>
@@ -321,7 +304,16 @@ export default function DetailModal() {
                                 </MaxLineTypography>
 
                                 <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3, minHeight: 44 }}>
-                                    <PlayButton appearance="modal" label="Play" href={playHref} newTab />
+                                    <Box sx={{
+                                            
+                                            '@keyframes pulse': {
+                                                '0%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(255,255,255,0.35)' },
+                                                '70%': { transform: 'scale(1.03)', boxShadow: '0 0 0 8px rgba(255,255,255,0)' },
+                                                '100%': { transform: 'scale(1)', boxShadow: '0 0 0 0 rgba(255,255,255,0)' },
+                                            },
+                                            animation: 'pulse 1.6s ease-in-out 2',
+                                            borderRadius: 4,
+                                        }}><PlayButton appearance="modal" label="Play" href={playHref} newTab /></Box>
 
                                     <NetflixIconButton
                                         onClick={toggleAdded}
@@ -346,7 +338,18 @@ export default function DetailModal() {
                                     </NetflixIconButton>
 
 
+
                                     <Box flexGrow={1} />
+
+                                    {soundSrc && (
+                                        <NetflixIconButton
+                                            aria-label="Toggle sound"
+                                            onClick={() => sound.toggle(soundSrc)}
+                                            sx={{ borderColor: "grey.700" }}
+                                        >
+                                            {!sound.muted ? <VolumeUpIcon /> : <VolumeOffIcon />}
+                                        </NetflixIconButton>
+                                    )}
                                 </Stack>
 
 

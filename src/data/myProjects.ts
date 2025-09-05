@@ -205,6 +205,7 @@ export const PROJECT_SECTIONS: ProjectSection[] = [
         textOverrides: [
             {
                 title: "Google Project Management — Professional Certificate",
+                href:"https://www.coursera.org/account/accomplishments/specialization/5PD2U8JGW9AN",
                 overview: [
                     "Google Project Management Certificate (Issued May 2024).",
                     "Credential ID: 5PD2U8JGW9AN | Coursera Verified.",
@@ -225,6 +226,7 @@ export const PROJECT_SECTIONS: ProjectSection[] = [
             },
             {
                 title: "McKinsey — Forward Program",
+                href:"https://www.credly.com/badges/760b8c6b-ad58-4fc3-97aa-05e01f0d7692/linked_in_profile",
                 overview: [
                     "McKinsey Forward Program (Issued Apr 2024).",
                     "Focused on leadership, communication, and problem-solving for career growth.",
@@ -245,6 +247,7 @@ export const PROJECT_SECTIONS: ProjectSection[] = [
             },
             {
                 title: "Game & App Academy — AI-enabled Game Jam",
+                href:"https://verified.sertifier.com/en/verify/20592417662546/",
                 overview: [
                     "Game & App Academy AI-enabled Game Jam (Issued Jun 2024).",
                     "Credential ID: 20592417662546 | Verified via Sertifier.",

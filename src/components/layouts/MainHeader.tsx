@@ -11,6 +11,8 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import MenuItem from "@mui/material/MenuItem";
 import useOffSetTop from "src/hooks/useOffSetTop";
 import { APP_BAR_HEIGHT } from "src/constant";
@@ -33,6 +35,9 @@ const MainHeader = () => {
   const pathname = usePathname();
   const router = useRouter();
   const isProjects = pathname?.startsWith("/projects");
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOverlayOpen, setMobileOverlayOpen] = React.useState(false);
   // Avoid project-specific hooks here; use events from header to page
 
   const pages = React.useMemo(() => {
@@ -81,9 +86,13 @@ const MainHeader = () => {
       }}
     >
       <Toolbar disableGutters>
-        <Logo href={isProjects ? "/intro" : undefined} sx={{ mr: { xs: 2, sm: 4 }, cursor: "pointer" }} />
+        <Logo
+          href={isProjects && !isMobile ? "/intro" : undefined}
+          onLogoClick={isProjects && isMobile ? () => setMobileOverlayOpen(true) : undefined}
+          sx={{ mr: { xs: 2, sm: 4 }, cursor: "pointer" }}
+        />
 
-        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+        <Box sx={{ flexGrow: 1, display: { xs: isProjects ? "none" : "flex", md: "none" } }}>
           <IconButton
             size="large"
             aria-label="account of current user"
@@ -141,7 +150,7 @@ const MainHeader = () => {
           href=""
           sx={{
             mr: 2,
-            display: { xs: "flex", md: "none" },
+            display: { xs: isProjects ? "none" : "flex", md: "none" },
             flexGrow: 1,
             fontWeight: 700,
             color: "inherit",
@@ -215,6 +224,38 @@ const MainHeader = () => {
           </Menu>
         </Box>
       </Toolbar>
+
+      {isProjects && isMobile && mobileOverlayOpen && (
+        <Box
+          onClick={() => setMobileOverlayOpen(false)}
+          sx={{ position: 'fixed', inset: 0, zIndex: 2000,
+            background: 'linear-gradient(180deg, rgba(0,0,0,0.85), rgba(0,0,0,0.95))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2,
+          }}
+        >
+          <Stack spacing={2} sx={{ width: '100%', maxWidth: 320 }} onClick={(e)=>e.stopPropagation()}>
+            {pages.map((page) => (
+              <NetflixNavigationLink
+                key={`mobile-${page.href}`}
+                href="#"
+                variant="h6"
+                onClick={(e)=>{
+                  e.preventDefault();
+                  setMobileOverlayOpen(false);
+                  if (page.label === 'About') {
+                    try { window.dispatchEvent(new Event('projects:about')); } catch {}
+                  } else if (page.label === 'Projects') {
+                    try { window.dispatchEvent(new CustomEvent('projects:scroll', { detail: { id: 'projects-list' } })); } catch {}
+                  }
+                }}
+              >
+                {page.label}
+              </NetflixNavigationLink>
+            ))}
+          </Stack>
+        </Box>
+      )}
+
     </AppBar>
   );
 };

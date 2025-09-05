@@ -1,7 +1,11 @@
 // src/app/projects/page.tsx
 "use client";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { useEffect, useMemo } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import HeroSection from "src/components/HeroSection";
 import withPagination from "src/hoc/withPagination";
 import SlickSlider from "src/components/slick-slider/SlickSlider";
@@ -9,6 +13,16 @@ import { MEDIA_TYPE } from "src/types/Common";
 import { Genre } from "src/types/Genre";
 import { PROJECT_SECTIONS } from "src/data/myProjects";
 import { useDetailModal } from "src/providers/DetailModalProvider";
+import PlayButton from "src/components/PlayButton";
+import AgeLimitChip from "src/components/AgeLimitChip";
+import QualityChip from "src/components/QualityChip";
+import { formatMinuteToReadable } from "src/utils/common";
+import { useSound } from "src/providers/SoundProvider";
+import { getSoundForTitle } from "src/utils/sounds";
+import { getPlayLinkForTitle } from "src/utils/links";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import IconButton from "@mui/material/IconButton";
 
 const HERO_GIF = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGplNWczYTFmeXliYzRnM28wZW1veGo3dDZlNDFybXBybWQ5YXg0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QTsXzRkuj4PiRfDzYP/giphy.gif";
 
@@ -16,6 +30,8 @@ const HERO_GIF = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGplNWczYTFm
 const GENRE_IDS = [28, 12, 18, 35, 878, 27, 53, 10749];
 
 export default function Page() {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { setDetailType } = useDetailModal();
 
   const flatOverrides = useMemo(() => {
