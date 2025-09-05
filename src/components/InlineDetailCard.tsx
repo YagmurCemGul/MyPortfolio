@@ -14,7 +14,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { getPlayLinkForTitle } from "src/utils/links";
 import { useSound } from "src/providers/SoundProvider";
 import { getSoundForTitle } from "src/utils/sounds";
@@ -40,6 +40,9 @@ export default function InlineDetailCard({ item }: { item: InlineDetailItem }) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const sound = useSound();
   const soundSrc = useMemo(() => getSoundForTitle(item.title), [item.title]);
+  const animRef = useRef<HTMLDivElement | null>(null);
+  const [animating, setAnimating] = useState(false);
+  const [animDir, setAnimDir] = useState<'open' | 'close'>('open');
 
   useEffect(() => {
     if (!item.title) return;
@@ -63,24 +66,42 @@ export default function InlineDetailCard({ item }: { item: InlineDetailItem }) {
       {/* Content */}
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" color="text.primary" sx={{ mb: 1 }}>{item.title}</Typography>
-        {/* Desktop-like behavior on mobile: line clamp without height animation */}
-        <Typography
-          variant="body2"
-          color="text.primary"
-          sx={{
-            mt: 0.25,
-            display: "-webkit-box",
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            WebkitLineClamp: expanded ? ("unset" as any) : 3,
-            whiteSpace: 'pre-line',
-          }}
-        >
-          {item.overview || ""}
-        </Typography>
+        {/* Smooth expandable text (mobile and desktop) */}
+        <Box sx={{ position: 'relative', mt: 0.25 }}>
+          <Box
+            ref={animRef}
+            sx={{
+              overflow: 'hidden',
+              maxHeight: expanded ? 2000 : 72, // ~3-4 lines
+              transition: (isMobile
+                ? (animDir === 'open' ? UI_TWEAKS.readMore.mobile.openTransition : UI_TWEAKS.readMore.mobile.closeTransition)
+                : (animDir === 'open' ? UI_TWEAKS.readMore.desktop.openTransition : UI_TWEAKS.readMore.desktop.closeTransition)
+              ),
+              willChange: 'max-height',
+            }}
+            onTransitionEnd={() => setAnimating(false)}
+          >
+            <Typography variant="body2" color="text.primary" sx={{ opacity: 0.95, whiteSpace: 'pre-line' }}>
+              {item.overview || ""}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 28,
+              pointerEvents: 'none',
+              background: 'linear-gradient(180deg, rgba(17,17,17,0), rgba(17,17,17,0.92))',
+              opacity: !expanded && !animating ? 1 : 0,
+              transition: 'opacity 300ms ease',
+            }}
+          />
+        </Box>
         {item.overview && item.overview.length > 0 && (
           <Link
-            onClick={(e)=>{ e.preventDefault(); setExpanded((v)=>!v); }}
+            onClick={(e)=>{ e.preventDefault(); setAnimating(true); setAnimDir(expanded ? 'close' : 'open'); setExpanded((v)=>!v); }}
             underline="always"
             color="inherit"
             href="#"

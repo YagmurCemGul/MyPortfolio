@@ -23,9 +23,9 @@ export const UI_TWEAKS = {
       // Underline link style
       underline: true,
       // Expand animation (used by inline cards if shown on desktop)
-      openTransition: 'max-height 480ms ease-in-out',
+      openTransition: 'max-height 600ms cubic-bezier(0.22,0.61,0.36,1)',
       // Collapse animation
-      closeTransition: 'max-height 420ms ease-in-out',
+      closeTransition: 'max-height 540ms cubic-bezier(0.22,0.61,0.36,1)',
     },
     mobile: {
       // Show "Read more / Read less" in mobile stacked modals
@@ -33,9 +33,9 @@ export const UI_TWEAKS = {
       // Underline link style
       underline: true,
       // Expand animation
-      openTransition: 'max-height 480ms ease-in-out',
+      openTransition: 'max-height 600ms cubic-bezier(0.22,0.61,0.36,1)',
       // Collapse animation
-      closeTransition: 'max-height 420ms ease-in-out',
+      closeTransition: 'max-height 540ms cubic-bezier(0.22,0.61,0.36,1)',
     },
   },
 } as const;

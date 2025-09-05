@@ -371,18 +371,24 @@ export default function DetailModal() {
                                                 {displayQuality && <QualityChip label={displayQuality} />}
                                             </Stack>
 
-                                            <Typography
-                                                variant="body1"
-                                                sx={{
-                                                    mt: 2,
-                                                    display: "-webkit-box",
-                                                    WebkitBoxOrient: "vertical",
-                                                    overflow: "hidden",
-                                                    WebkitLineClamp: expanded ? ("unset" as any) : 3,
-                                                }}
-                                            >
-                                                {displayOverview}
-                                            </Typography>
+                                            <Box sx={{ position: 'relative', mt: 2 }}>
+                                                <Box
+                                                    sx={{
+                                                        overflow: 'hidden',
+                                                        maxHeight: expanded ? 2000 : 78, // roughly 3 lines for body1
+                                                        transition: (fullScreen
+                                                            ? UI_TWEAKS.readMore.mobile.openTransition
+                                                            : UI_TWEAKS.readMore.desktop.openTransition),
+                                                    }}
+                                                >
+                                                    <Typography variant="body1">
+                                                        {displayOverview}
+                                                    </Typography>
+                                                </Box>
+                                                {!expanded && (
+                                                    <Box sx={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 28, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(20,20,20,0), rgba(20,20,20,0.92))' }} />
+                                                )}
+                                            </Box>
 
                                             {displayOverview && displayOverview.length > 0 && (
                                                 <Link
