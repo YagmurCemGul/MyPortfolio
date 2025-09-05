@@ -32,6 +32,8 @@ import { PROJECT_SECTIONS } from "src/data/myProjects";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
+import Link from "@mui/material/Link";
+import { UI_TWEAKS } from "src/constant/uiTweaks";
 
 
 
@@ -382,13 +384,24 @@ export default function DetailModal() {
                                                 {displayOverview}
                                             </Typography>
 
-                                            {!expanded && displayOverview && displayOverview.length > 140 && (
-                                                <Box
-                                                    onClick={() => setExpanded(true)}
-                                                    sx={{ mt: 1, cursor: "pointer", textDecoration: "underline", color: "grey.300" }}
+                                            {displayOverview && displayOverview.length > 0 && (
+                                                <Link
+                                                    href="#"
+                                                    onClick={(e)=>{ e.preventDefault(); setExpanded((v)=>!v); }}
+                                                    underline={UI_TWEAKS.readMore.desktop.underline ? 'always' : 'hover'}
+                                                    sx={{
+                                                        mt: 1.25,
+                                                        display: {
+                                                            xs: UI_TWEAKS.readMore.mobile.show ? 'inline-block' : 'none',
+                                                            md: UI_TWEAKS.readMore.desktop.show ? 'inline-block' : 'none',
+                                                        },
+                                                        fontWeight: 700,
+                                                        color: 'common.white',
+                                                        cursor: 'pointer',
+                                                    }}
                                                 >
-                                                    Read more
-                                                </Box>
+                                                    {expanded ? 'Read less' : 'Read more'}
+                                                </Link>
                                             )}
                                         </Grid>
 

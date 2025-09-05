@@ -3,9 +3,7 @@
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useEffect, useMemo } from "react";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
+import { useEffect, useMemo, useState } from "react";
 import HeroSection from "src/components/HeroSection";
 import withPagination from "src/hoc/withPagination";
 import SlickSlider from "src/components/slick-slider/SlickSlider";
@@ -23,6 +21,7 @@ import { getPlayLinkForTitle } from "src/utils/links";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import IconButton from "@mui/material/IconButton";
+import InlineDetailCard from "src/components/InlineDetailCard";
 
 const HERO_GIF = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGplNWczYTFmeXliYzRnM28wZW1veGo3dDZlNDFybXBybWQ5YXg0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QTsXzRkuj4PiRfDzYP/giphy.gif";
 
@@ -30,9 +29,8 @@ const HERO_GIF = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGplNWczYTFm
 const GENRE_IDS = [28, 12, 18, 35, 878, 27, 53, 10749];
 
 export default function Page() {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { setDetailType } = useDetailModal();
+  // const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const flatOverrides = useMemo(() => {
     return PROJECT_SECTIONS.flatMap((sec) =>
@@ -47,6 +45,17 @@ export default function Page() {
       }))
     ).filter((x) => x.title && x.backdrop_path);
   }, []);
+
+  // useEffect(() => {
+  //   const onOpen = () => setMobileSearchOpen(true);
+  //   const onClose = () => setMobileSearchOpen(false);
+  //   window.addEventListener('projects:mobileSearchOpen', onOpen as EventListener);
+  //   window.addEventListener('projects:mobileSearchClose', onClose as EventListener);
+  //   return () => {
+  //     window.removeEventListener('projects:mobileSearchOpen', onOpen as EventListener);
+  //     window.removeEventListener('projects:mobileSearchClose', onClose as EventListener);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const onSearch = (e: any) => {
@@ -140,15 +149,45 @@ export default function Page() {
       />
       {/* Anchor to scroll below the hero */}
       <div id="projects-list" />
-      {PROJECT_SECTIONS.map((section, idx) => {
-        const genreId = GENRE_IDS[idx % GENRE_IDS.length]; // benzersiz cache anahtarı sağlar
-        const genre: Genre = { id: genreId, name: section.name }; // başlık senin, fetch TMDB'den
-        const SectionSlider = withPagination(SlickSlider, MEDIA_TYPE.Movie, genre);
-        return (
-          <SectionSlider key={section.key} textOverrides={section.textOverrides} />
-        );
-      })}
+      {/* Mobile stacked sections */}
+      <Box sx={{ display: { xs: 'block', md: 'none' }, px: { xs: 2, sm: 3 }, color: 'text.primary' }}>
+        <Stack spacing={3}>
+          {PROJECT_SECTIONS.map((section) => (
+            <Box key={`mobile-section-${section.key}`}>
+              <Typography variant="h6" color="text.primary" sx={{ mb: 1.5 }}>
+                {section.name}
+              </Typography>
+              <Stack spacing={2}>
+                {section.textOverrides.map((ov) => (
+                  <InlineDetailCard
+                    key={`${section.key}-${ov.title}`}
+                    item={{
+                      title: ov.title || "",
+                      overview: ov.overview || "",
+                      backdrop_path: ov.backdrop_path || "",
+                      href: ov.href || "",
+                      skills: (ov.skills as string[]) || [],
+                      availableIn: ov.availableIn || "English",
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          ))}
+        </Stack>
+      </Box>
+
+      {/* Desktop sliders */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        {PROJECT_SECTIONS.map((section, idx) => {
+          const genreId = GENRE_IDS[idx % GENRE_IDS.length]; // benzersiz cache anahtarı sağlar
+          const genre: Genre = { id: genreId, name: section.name }; // başlık senin, fetch TMDB'den
+          const SectionSlider = withPagination(SlickSlider, MEDIA_TYPE.Movie, genre);
+          return (
+            <SectionSlider key={section.key} textOverrides={section.textOverrides} />
+          );
+        })}
+      </Box>
     </Stack>
   );
 }
-

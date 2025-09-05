@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { styled, alpha, useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -15,9 +16,10 @@ import Chip from "@mui/material/Chip";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
-    width: "100%",
+    width: "auto", // don't reserve space; prevent desktop hidden gap
     display: "flex",
     alignItems: "center",
+    flexShrink: 0,
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -40,19 +42,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
             easing: theme.transitions.easing.easeIn,
         }),
         // Odaklanınca genişlet
-        "&:focus": {
-            width: 220, // px cinsinden sabit bir genişlik daha sorunsuz çalışır
-        },
+        // width odakta sx ile override edilecek (mobile uyumlu)
     },
 }));
 
 export default function SearchBox() {
     const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [isFocused, setIsFocused] = useState(false);
     const [query, setQuery] = useState("");
     const searchInputRef = useRef<HTMLInputElement | null>(null);
     const pathname = usePathname();
     const router = useRouter();
+    // overlay mode removed; keep regular inline search
 
     const entries = useMemo(() => {
         return PROJECT_SECTIONS.flatMap(sec =>
@@ -154,14 +156,27 @@ export default function SearchBox() {
         }
     };
 
+    const onProjectsMobile = isMobile && pathname?.startsWith('/projects');
+    const overlayActive = onProjectsMobile && isFocused;
+
     return (
         <Search
-            sx={
-                isFocused
-                    ? { border: "1px solid white", backgroundColor: "black" }
-                    : undefined
-            }
+            sx={{
+                ...(isFocused && !overlayActive ? { border: "1px solid white", backgroundColor: "black" } : undefined),
+                maxWidth: overlayActive ? '92vw' : undefined,
+                width: onProjectsMobile ? 'auto' : undefined,
+                position: 'relative',
+                overflow: 'visible',
+                flexShrink: 0,
+            }}
         >
+            {overlayActive && (
+                <Box
+                    onClick={() => searchInputRef.current?.blur()}
+                    sx={{ position: 'fixed', inset: 0, zIndex: 1200,
+                        background: 'linear-gradient(180deg, rgba(0,0,0,0.85), rgba(0,0,0,0.95))' }}
+                />
+            )}
             <SearchIconWrapper onClick={handleClickSearchIcon}>
                 <SearchIcon />
             </SearchIconWrapper>
@@ -169,6 +184,19 @@ export default function SearchBox() {
             <StyledInputBase
                 inputRef={searchInputRef}
                 placeholder="Titles, people, genres"
+                sx={{
+                    ...(overlayActive ? {
+                        position: 'fixed', top: 12, left: '50%', transform: 'translateX(-50%)',
+                        width: 'min(92vw, 360px)', bgcolor: '#000', borderRadius: 1,
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+                        zIndex: 1202,
+                    } : { zIndex: 1201 }),
+                    '& .MuiInputBase-input': overlayActive ? { width: '100% !important' } : undefined,
+                    '& .MuiInputBase-input:focus': {
+                        width: isMobile && !overlayActive ? 180 : (!overlayActive ? 220 : undefined),
+                    },
+                }}
                 inputProps={{
                     "aria-label": "search",
                     onFocus: () => setIsFocused(true),
@@ -181,10 +209,10 @@ export default function SearchBox() {
                             try { window.dispatchEvent(new CustomEvent('projects:search', { detail: { q } })); } catch {}
                             if (!pathname?.startsWith('/projects')) {
                                 try { sessionStorage.setItem('pendingProjectsSearch', q); } catch {}
-                                router.push('/projects');
-                            }
-                        }
-                    }
+                             router.push('/projects');
+                         }
+                     }
+                 }
                 }}
             />
 
@@ -192,16 +220,18 @@ export default function SearchBox() {
                 <Paper
                     elevation={6}
                     sx={{
-                        position: "absolute",
-                        top: "100%",
-                        left: 0,
-                        mt: 1,
-                        width: 280,
+                        position: overlayActive ? 'fixed' : 'absolute',
+                        top: overlayActive ? 60 : '100%',
+                        left: overlayActive ? '50%' : (isMobile ? 'auto' : 0),
+                        transform: overlayActive ? 'translateX(-50%)' : 'none',
+                        right: overlayActive ? 'auto' : (isMobile ? 0 : 'auto'),
+                        mt: overlayActive ? 0 : 1,
+                        width: overlayActive ? 'min(92vw, 360px)' : (isMobile ? 'min(92vw, 320px)' : 280),
                         maxHeight: 320,
                         overflowY: "auto",
                         bgcolor: "#0f0f0f",
                         color: "#fff",
-                        zIndex: 1200,
+                        zIndex: 1201,
                         border: "1px solid rgba(255,255,255,0.15)",
                     }}
                 >

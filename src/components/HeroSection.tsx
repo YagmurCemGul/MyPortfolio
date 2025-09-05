@@ -2,6 +2,7 @@
 //src/components/HeroSection.tsx
 "use client";
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
@@ -34,6 +35,8 @@ interface TopTrailerProps {
 }
 
 export default function TopTrailer({ mediaType, heroImageUrl, heroTitle, heroText }: TopTrailerProps) {
+  const pathname = usePathname();
+  const onProjects = pathname?.startsWith('/projects');
   const { data } = useGetVideosByMediaTypeAndCustomGenreQuery({
     mediaType,
     apiString: "popular",
@@ -214,7 +217,16 @@ export default function TopTrailer({ mediaType, heroImageUrl, heroTitle, heroTex
                   >
                     {!muted ? <VolumeUpIcon /> : <VolumeOffIcon />}
                   </NetflixIconButton>
-                  <MaturityRate>{`${maturityRate}+`}</MaturityRate>
+                  <MaturityRate
+                    sx={onProjects ? {
+                      fontSize: { xs: 14, sm: 22 },
+                      py: { xs: 0.5, sm: 1 },
+                      pl: { xs: 1, sm: 1.5 },
+                      pr: { xs: 1.5, sm: 3 },
+                    } : undefined}
+                  >
+                    {`${maturityRate}+`}
+                  </MaturityRate>
                 </Stack>
                   ) : (
                     // heroImageUrl olduğunda VideoJS yok; ses butonunu SoundProvider ile göster
@@ -231,7 +243,16 @@ export default function TopTrailer({ mediaType, heroImageUrl, heroTitle, heroTex
                       <NetflixIconButton size="large" onClick={toggleHeroSound} sx={{ zIndex: 2 }}>
                         {!sound.muted ? <VolumeUpIcon /> : <VolumeOffIcon />}
                       </NetflixIconButton>
-                      <MaturityRate>{`${maturityRate}+`}</MaturityRate>
+                      <MaturityRate
+                        sx={onProjects ? {
+                          fontSize: { xs: 14, sm: 22 },
+                          py: { xs: 0.5, sm: 1 },
+                          pl: { xs: 1, sm: 1.5 },
+                          pr: { xs: 1.5, sm: 3 },
+                        } : undefined}
+                      >
+                        {`${maturityRate}+`}
+                      </MaturityRate>
                     </Stack>
                   )}
               </Box>
@@ -266,11 +287,17 @@ export default function TopTrailer({ mediaType, heroImageUrl, heroTitle, heroTex
                         {computedText}
                     </MaxLineTypography>
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                      <PlayButton appearance="hero" label="Resume" href="https://drive.google.com/file/d/1Hgc63RAADimxVNR5J9G2Olh3kuhESCYx/view?usp=drive_link" newTab size="large" />
-                      <MoreInfoButton
-                        size="large"
-                        {...(video ? { onClick: () => setDetailType({ mediaType, id: video.id }) } : {})}
-                      />
+                    <PlayButton
+                      appearance="hero"
+                      label="Resume"
+                      href="https://drive.google.com/file/d/1Hgc63RAADimxVNR5J9G2Olh3kuhESCYx/view?usp=drive_link"
+                      newTab
+                      sx={onProjects ? { px: { xs: 1, sm: 2 }, py: { xs: 0.25, sm: 1 }, fontSize: { xs: 13, sm: 24, md: 28 }, minWidth: { xs: 0, sm: 'auto' }, maxWidth: { xs: 'fit-content', sm: 'none' } } : undefined}
+                    />
+                    <MoreInfoButton
+                      sx={onProjects ? { px: { xs: 1, sm: 2 }, py: { xs: 0.25, sm: 1 }, fontSize: { xs: 13, sm: 24, md: 28 }, minWidth: { xs: 0, sm: 'auto' }, maxWidth: { xs: 'fit-content', sm: 'none' } } : undefined}
+                      {...(video ? { onClick: () => setDetailType({ mediaType, id: video.id }) } : {})}
+                    />
                   </Stack>
                 </Stack>
               </Box>

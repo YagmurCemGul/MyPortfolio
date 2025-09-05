@@ -21,6 +21,7 @@ import { usePathname, useRouter } from "next/navigation";
 // Project-only actions are coordinated via window events to avoid provider coupling
 import SearchBox from "../SearchBox";
 import NetflixNavigationLink from "../NetflixNavigationLink";
+import { UI_TWEAKS } from "src/constant/uiTweaks";
 
 const defaultPages = [
   { label: "Welcome", href: "/" },
@@ -39,6 +40,7 @@ const MainHeader = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOverlayOpen, setMobileOverlayOpen] = React.useState(false);
   // Avoid project-specific hooks here; use events from header to page
+  
 
   const pages = React.useMemo(() => {
     if (!isProjects) return defaultPages;
@@ -73,8 +75,9 @@ const MainHeader = () => {
   return (
     <AppBar
       sx={{
-        // px: "4%",
-        px: "60px",
+        // Subtle mobile spacing for /projects
+        pl: isProjects && isMobile ? 1.5 : "60px",   // ~12px
+        pr: isProjects && isMobile ? 1 : "60px",     // ~8px
         height: APP_BAR_HEIGHT,
         backgroundImage: "none",
         ...(isOffset
@@ -91,6 +94,9 @@ const MainHeader = () => {
           onLogoClick={isProjects && isMobile ? () => setMobileOverlayOpen(true) : undefined}
           sx={{ mr: { xs: 2, sm: 4 }, cursor: "pointer" }}
         />
+
+        {/* Spacer: projects mobile'da sağ tarafa arama/hesap itilsin */}
+        <Box sx={{ flexGrow: 1, display: { xs: isProjects ? "block" : "none", md: "none" } }} />
 
         <Box sx={{ flexGrow: 1, display: { xs: isProjects ? "none" : "flex", md: "none" } }}>
           <IconButton
@@ -193,10 +199,32 @@ const MainHeader = () => {
           ))}
         </Stack>
 
-        <Box sx={{ flexGrow: 0, display: "flex", gap: 2 }}>
+        <Box
+          sx={{
+            flexGrow: 0,
+            display: "flex",
+            gap: {
+              xs: isProjects ? UI_TWEAKS.projectsHeader.mobile.searchAccountGap : 1.5,
+              md: isProjects ? UI_TWEAKS.projectsHeader.desktop.searchAccountGap : 2,
+            },
+            alignItems: 'center',
+            flexWrap: 'nowrap',
+            ml: { md: 'auto' },
+            justifyContent: { md: 'flex-end' },
+          }}
+        >
           <SearchBox />
           <Tooltip title={isProjects ? "Accounts" : "Open settings"}>
-            <IconButton onClick={(e) => { if (isProjects) { router.push('/accounts'); } else { handleOpenUserMenu(e as any); } }} sx={{ p: 0 }}>
+            <IconButton
+              onClick={(e) => { if (isProjects) { router.push('/accounts'); } else { handleOpenUserMenu(e as any); } }}
+              sx={{
+                p: 0,
+                mr: isProjects ? {
+                  xs: UI_TWEAKS.projectsHeader.mobile.accountRightMargin,
+                  md: UI_TWEAKS.projectsHeader.desktop.accountRightMargin,
+                } : 0,
+              }}
+            >
               <Avatar alt="user_avatar" src="/avatar.png" variant="rounded" />
             </IconButton>
           </Tooltip>
@@ -233,12 +261,13 @@ const MainHeader = () => {
             display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2,
           }}
         >
-          <Stack spacing={2} sx={{ width: '100%', maxWidth: 320 }} onClick={(e)=>e.stopPropagation()}>
+          <Stack spacing={2} sx={{ width: '100%', maxWidth: 320, alignItems: 'center' }} onClick={(e)=>e.stopPropagation()}>
             {pages.map((page) => (
               <NetflixNavigationLink
                 key={`mobile-${page.href}`}
                 href="#"
                 variant="h6"
+                sx={{ textAlign: 'center', width: '100%' }}
                 onClick={(e)=>{
                   e.preventDefault();
                   setMobileOverlayOpen(false);
