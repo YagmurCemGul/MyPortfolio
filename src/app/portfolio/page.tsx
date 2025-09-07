@@ -141,8 +141,7 @@ export default function StalkerPage() {
 
     // — İKİ SATIR — //
     const line1 = "Stalker was ejected.";
-    const line2 =
-        "";
+
     // ← YAZININ BAŞLAMASI İÇİN GENEL DELAY (saniye)
     const TEXT_START_DELAY_S = 4; // örnek: 4s sonra yazmaya başla
 
@@ -165,8 +164,6 @@ export default function StalkerPage() {
     };
 
     const lettersLine1 = useMemo(() => makeLetters(line1, TEXT_START_DELAY_S), [TEXT_START_DELAY_S]);
-    const lettersLine2 = useMemo(() => makeLetters(line2, TEXT_START_DELAY_S), [TEXT_START_DELAY_S]);
-
 
 
     
@@ -199,7 +196,6 @@ export default function StalkerPage() {
             {/* Yazı katmanı */}
             <h1 className="title">
                 <span className="line line1">{lettersLine1}</span>
-                <span className="line line2">{lettersLine2}</span>
             </h1>
 
                 {/* Crewmate */}
