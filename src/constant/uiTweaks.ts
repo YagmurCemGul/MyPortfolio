@@ -33,9 +33,9 @@ export const UI_TWEAKS = {
       // Underline link style
       underline: true,
       // Expand animation
-      openTransition: 'max-height 600ms cubic-bezier(0.22,0.61,0.36,1)',
+      openTransition: 'max-height 360ms ease-in-out',
       // Collapse animation
-      closeTransition: 'max-height 540ms cubic-bezier(0.22,0.61,0.36,1)',
+      closeTransition: 'max-height 360ms ease-in-out',
     },
   },
 } as const;

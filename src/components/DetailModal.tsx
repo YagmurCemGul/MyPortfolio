@@ -1,7 +1,7 @@
 
 //src/components/DetailModal.tsx 
 "use client";
-import { forwardRef, useMemo, useState, useEffect } from "react";
+import { forwardRef, useMemo, useState, useEffect, useRef } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import Box from "@mui/material/Box";
@@ -79,9 +79,33 @@ export default function DetailModal() {
 
 
     const [expanded, setExpanded] = useState(false);
+    const [animDir, setAnimDir] = useState<'open' | 'close'>('open');
+    const desktopClampRef = useRef<HTMLDivElement | null>(null);
+    const desktopFullRef = useRef<HTMLDivElement | null>(null);
+    const [desktopOverflow, setDesktopOverflow] = useState(false);
+    const [desktopFullHeight, setDesktopFullHeight] = useState<number>(0);
     const sound = useSound();
     const soundSrc = getSoundForTitle(detail.override?.title);
     useEffect(() => setExpanded(false), [displayTitle]);
+
+    // Measure desktop overflow to decide if Read more should appear
+    useEffect(() => {
+        if (fullScreen) return; // only for desktop modal
+        const elClamp = desktopClampRef.current;
+        const elFull = desktopFullRef.current;
+        if (!elClamp || !elFull) return;
+        const check = () => {
+            // Compare measured full scrollHeight vs clamped clientHeight
+            const fullH = elFull.scrollHeight || elFull.clientHeight;
+            const clampH = elClamp.clientHeight;
+            setDesktopFullHeight(fullH);
+            const overflow = fullH - clampH > 1;
+            setDesktopOverflow(overflow && !expanded);
+        };
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, [displayOverview, expanded, fullScreen]);
     
     const rawHref = detail.override?.href;
     const playHref = getPlayLinkForTitle(displayTitle, rawHref);
@@ -270,6 +294,8 @@ export default function DetailModal() {
                                     position: "absolute",
                                     inset: 0,
                                     right: "26.09%",
+                                    pointerEvents: 'none',
+                                    zIndex: 0,
                                 }}
                             />
                             <Box
@@ -281,6 +307,8 @@ export default function DetailModal() {
                                     right: 0,
                                     bottom: 0,
                                     height: "14.7vw",
+                                    pointerEvents: 'none',
+                                    zIndex: 0,
                                 }}
                             />
 
@@ -371,43 +399,81 @@ export default function DetailModal() {
                                                 {displayQuality && <QualityChip label={displayQuality} />}
                                             </Stack>
 
-                                            <Box sx={{ position: 'relative', mt: 2 }}>
-                                                <Box
-                                                    sx={{
-                                                        overflow: 'hidden',
-                                                        maxHeight: expanded ? 2000 : 78, // roughly 3 lines for body1
-                                                        transition: (fullScreen
-                                                            ? UI_TWEAKS.readMore.mobile.openTransition
-                                                            : UI_TWEAKS.readMore.desktop.openTransition),
-                                                    }}
-                                                >
-                                                    <Typography variant="body1">
-                                                        {displayOverview}
-                                                    </Typography>
+                                            {fullScreen ? (
+                                                // Mobile: smooth animated open/close
+                                                <Box sx={{ position: 'relative', mt: 2 }}>
+                                                    <Box
+                                                        sx={{
+                                                            overflow: 'hidden',
+                                                            maxHeight: expanded ? 2000 : 78,
+                                                            transition: (animDir === 'open' ? UI_TWEAKS.readMore.mobile.openTransition : UI_TWEAKS.readMore.mobile.closeTransition),
+                                                        }}
+                                                    >
+                                                        <Typography variant="body1">
+                                                            {displayOverview}
+                                                        </Typography>
+                                                    </Box>
+                                                    {!expanded && (
+                                                        <Box sx={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 28, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(20,20,20,0), rgba(20,20,20,0.92))' }} />
+                                                    )}
                                                 </Box>
-                                                {!expanded && (
-                                                    <Box sx={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 28, pointerEvents: 'none', background: 'linear-gradient(180deg, rgba(20,20,20,0), rgba(20,20,20,0.92))' }} />
-                                                )}
-                                            </Box>
+                                            ) : (
+                                                // Desktop: smooth open downward using max-height (no upward jump)
+                                                <Box sx={{ position: 'relative', mt: 2 }}>
+                                                    <Box
+                                                        sx={{
+                                                            overflow: 'hidden',
+                                                            maxHeight: expanded ? (desktopFullHeight || 2000) : 78,
+                                                            transition: (animDir === 'open' ? UI_TWEAKS.readMore.desktop.openTransition : UI_TWEAKS.readMore.desktop.closeTransition),
+                                                            willChange: 'max-height',
+                                                        }}
+                                                    >
+                                                        <Typography ref={desktopClampRef} variant="body1">
+                                                            {displayOverview}
+                                                        </Typography>
+                                                    </Box>
+                                                    {/* Hidden full copy to measure actual height without affecting layout */}
+                                                    <Box sx={{ height: 0, overflow: 'hidden' }}>
+                                                        <Typography ref={desktopFullRef} variant="body1">
+                                                            {displayOverview}
+                                                        </Typography>
+                                                    </Box>
+                                                    {!expanded && (desktopOverflow || (displayOverview?.length || 0) > 140) && (
+                                                        <Box
+                                                            onClick={() => { setAnimDir('open'); setExpanded(true); }}
+                                                            sx={{ mt: 1, cursor: "pointer", textDecoration: "underline", color: 'common.white', fontWeight: 700 }}
+                                                        >
+                                                            Read more
+                                                        </Box>
+                                                    )}
+                                                    {expanded && (
+                                                        <Box
+                                                            onClick={() => { setAnimDir('close'); setExpanded(false); }}
+                                                            sx={{ mt: 1, cursor: "pointer", textDecoration: "underline", color: 'common.white', fontWeight: 700 }}
+                                                        >
+                                                            Read less
+                                                        </Box>
+                                                    )}
+                                                </Box>
+                                            )}
 
                                             {displayOverview && displayOverview.length > 0 && (
-                                                <Link
-                                                    href="#"
-                                                    onClick={(e)=>{ e.preventDefault(); setExpanded((v)=>!v); }}
-                                                    underline={UI_TWEAKS.readMore.desktop.underline ? 'always' : 'hover'}
-                                                    sx={{
-                                                        mt: 1.25,
-                                                        display: {
-                                                            xs: UI_TWEAKS.readMore.mobile.show ? 'inline-block' : 'none',
-                                                            md: UI_TWEAKS.readMore.desktop.show ? 'inline-block' : 'none',
-                                                        },
-                                                        fontWeight: 700,
-                                                        color: 'common.white',
-                                                        cursor: 'pointer',
-                                                    }}
-                                                >
-                                                    {expanded ? 'Read less' : 'Read more'}
-                                                </Link>
+                                                fullScreen ? (
+                                                    <Link
+                                                        href="#"
+                                                        onClick={(e)=>{ e.preventDefault(); setAnimDir(expanded ? 'close' : 'open'); setExpanded((v)=>!v); }}
+                                                        underline={UI_TWEAKS.readMore.mobile.underline ? 'always' : 'hover'}
+                                                        sx={{
+                                                            mt: 1.25,
+                                                            display: UI_TWEAKS.readMore.mobile.show ? 'inline-block' : 'none',
+                                                            fontWeight: 700,
+                                                            color: 'common.white',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    >
+                                                        {expanded ? 'Read less' : 'Read more'}
+                                                    </Link>
+                                                ) : null
                                             )}
                                         </Grid>
 
@@ -447,8 +513,8 @@ export default function DetailModal() {
 
 
                     {moreLikeSorted.length > 0 && (
-                        <Container sx={{ py: 2, px: { xs: 2, sm: 3, md: 5 } }}>
-                            <Typography variant="h6" sx={{ mb: 2 }}>More Like This</Typography>
+                        <Container sx={{ py: 2, px: { xs: 2, sm: 3, md: 5 }, position: 'relative', zIndex: 1 }}>
+                            <Typography variant="h6" color="text.primary" sx={{ mb: 2 }}>More Like This</Typography>
                             <Grid container spacing={2}>
                                 {moreLikeSorted.map((it) => (
                                     <Grid item xs={6} sm={4} key={`${it.section}-${it.title}`}>
