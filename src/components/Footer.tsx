@@ -8,7 +8,7 @@ export default function Footer() {
                 <nav className="flex items-center gap-4">
                     <Link href="https://wa.me/905386520339" target="_blank" rel="noopener noreferrer">WhatsApp</Link>
                     <Link href="https://calendly.com/yagmurcemgul" target="_blank" rel="noopener noreferrer">Calendly</Link>
-                    <Link href="https://github.com/yagmurcemgul1" target="_blank" rel="noopener noreferrer">GitHub</Link>
+                    <Link href="https://github.com/YagmurCemGul" target="_blank" rel="noopener noreferrer">GitHub</Link>
                     <Link href="https://www.linkedin.com/in/yagmurcemgul/" target="_blank" rel="noopener noreferrer">LinkedIn</Link>
                 </nav>
             </div>

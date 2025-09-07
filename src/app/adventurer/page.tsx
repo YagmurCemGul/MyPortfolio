@@ -96,7 +96,7 @@ export default function AdventurerHome() {
           </a>
 
           {/* GitHub */}
-          <a href="https://github.com/YagmurCemGul1" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <a href="https://github.com/YagmurCemGul" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
             <lord-icon
               src="https://cdn.lordicon.com/acgiczyg.json"
               trigger="hover"

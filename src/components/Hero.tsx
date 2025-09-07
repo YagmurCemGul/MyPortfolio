@@ -64,7 +64,7 @@ export default function Hero() {
                         <span className="text-sm">Mail</span>
                     </a>
                     <a
-                        href="https://github.com/yagmurcemgul1"
+                        href="https://github.com/yagmurcemgul"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group inline-flex items-center gap-2 text-white/90 hover:text-white"
