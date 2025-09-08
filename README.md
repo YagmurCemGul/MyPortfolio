@@ -2,10 +2,6 @@
 
 A personal portfolio built with Next.js App Router, React, Material UI (MUI), Redux Toolkit, slick carousel, and video.js. The site includes cinematic hero sections, a Projects page with desktop sliders and a mobile-friendly stacked view, and tunable UI behaviors.
 
-<p align="center">
-  <img alt="Home" src="./public/assets/home-page.png" width="820" />
-</p>
-
 ## Quick Start
 
 - Node: 18+ (Next 15 / React 19)
@@ -58,10 +54,6 @@ Relevant files:
 - Desktop modal: `src/components/DetailModal.tsx`
 - Mobile stacked: `src/components/InlineDetailCard.tsx`
 
-<p align="center">
-  <img alt="Detail Modal" src="./public/assets/detail-modal.png" width="820" />
-</p>
-
 ### Header spacing (Search ↔ Account)
 Adjust spacing specifically for the Projects page:
 - `src/constant/uiTweaks.ts`
@@ -74,20 +66,6 @@ Used in `src/components/layouts/MainHeader.tsx`.
 ### Hero buttons and maturity badge sizing
 - Responsive sizing applied in `src/components/HeroSection.tsx` so mobile `/projects` shows smaller buttons and `18+` badge.
 - `src/components/MaturityRate.tsx` supports `sx` overrides.
-
-## More Previews
-
-<p align="center">
-  <img alt="Grid Genre" src="./public/assets/grid-genre.png" width="820" />
-</p>
-
-<p align="center">
-  <img alt="Mini Portal" src="./public/assets/mini-portal.png" width="820" />
-</p>
-
-<p align="center">
-  <img alt="Watch" src="./public/assets/watch.png" width="820" />
-</p>
 
 ## Favicon
 Next picks the favicon from either of:
