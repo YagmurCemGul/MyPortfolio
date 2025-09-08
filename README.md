@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# My Portfolio (Next.js)
 
-## Getting Started
+A personal portfolio built with Next.js App Router, React, Material UI (MUI), Redux Toolkit, slick carousel, and video.js. The site includes cinematic hero sections, a Projects page with desktop sliders and a mobile-friendly stacked view, and tunable UI behaviors.
 
-First, run the development server:
+<p align="center">
+  <img alt="Home" src="./public/assets/home-page.png" width="820" />
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Quick Start
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node: 18+ (Next 15 / React 19)
+- Install: `pnpm i` or `yarn` or `npm i`
+- Dev: `pnpm dev` (or `npm run dev`) — runs Next with Turbopack
+- Build: `pnpm build`
+- Start: `pnpm start`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Scripts live in `package.json`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Create a `.env.local` in `my-portfolio` with:
 
-To learn more about Next.js, take a look at the following resources:
+- `NEXT_PUBLIC_TMDB_V3_API_KEY` — TMDB API key (used by discover slices)
+- `NEXT_PUBLIC_API_ENDPOINT_URL` — optional API base if needed
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Constants are read in `src/constant/index.ts`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure (selected)
 
-## Deploy on Vercel
+- `src/app` — App Router pages and layouts
+  - `layout.tsx` — global metadata, providers, theme registry
+  - `projects/page.tsx` — Projects view (desktop sliders, mobile stacked)
+  - `favicon.ico` — default favicon picked up by Next
+- `src/components` — UI components (HeroSection, DetailModal, Header, etc.)
+- `src/store` — Redux Toolkit slices and RTK Query endpoints
+- `src/constant` — shared constants
+  - `index.ts` — base constants
+  - `uiTweaks.ts` — central UI tuning (read-more timing, header gaps)
+- `public/` — static assets (also supports `public/favicon.ico`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Key Features & Tuning
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Projects Page
+- Desktop: section sliders via `withPagination(SlickSlider, ...)` in `src/app/projects/page.tsx`.
+- Mobile: stacked inline detail cards (`InlineDetailCard`) rendered under section headers.
+
+### Read more / Read less
+- Desktop modal: smooth open downward using `max-height`, no upward jump.
+- Mobile stacked cards: same approach, with a gentle gradient fade.
+- Tune globally in `src/constant/uiTweaks.ts`:
+  - `UI_TWEAKS.readMore.desktop.openTransition`
+  - `UI_TWEAKS.readMore.desktop.closeTransition`
+  - `UI_TWEAKS.readMore.mobile.openTransition`
+  - `UI_TWEAKS.readMore.mobile.closeTransition`
+  - Toggle visibility/underline with `UI_TWEAKS.readMore.*.show/underline`.
+
+Relevant files:
+- Desktop modal: `src/components/DetailModal.tsx`
+- Mobile stacked: `src/components/InlineDetailCard.tsx`
+
+<p align="center">
+  <img alt="Detail Modal" src="./public/assets/detail-modal.png" width="820" />
+</p>
+
+### Header spacing (Search ↔ Account)
+Adjust spacing specifically for the Projects page:
+- `src/constant/uiTweaks.ts`
+  - `projectsHeader.mobile.searchAccountGap`
+  - `projectsHeader.mobile.accountRightMargin`
+  - `projectsHeader.desktop.searchAccountGap`
+  - `projectsHeader.desktop.accountRightMargin`
+Used in `src/components/layouts/MainHeader.tsx`.
+
+### Hero buttons and maturity badge sizing
+- Responsive sizing applied in `src/components/HeroSection.tsx` so mobile `/projects` shows smaller buttons and `18+` badge.
+- `src/components/MaturityRate.tsx` supports `sx` overrides.
+
+## More Previews
+
+<p align="center">
+  <img alt="Grid Genre" src="./public/assets/grid-genre.png" width="820" />
+</p>
+
+<p align="center">
+  <img alt="Mini Portal" src="./public/assets/mini-portal.png" width="820" />
+</p>
+
+<p align="center">
+  <img alt="Watch" src="./public/assets/watch.png" width="820" />
+</p>
+
+## Favicon
+Next picks the favicon from either of:
+- `src/app/favicon.ico` (preferred in App Router)
+- `public/favicon.ico`
+
+Replace either file and redeploy. If browsers cache the old icon, hard-refresh (Cmd/Ctrl+Shift+R) or bump the filename and reference via metadata `icons` if needed.
+
+## Deployment (Vercel)
+- Ensure env vars are set in the Vercel project (especially `NEXT_PUBLIC_TMDB_V3_API_KEY`).
+- Push to your Git provider; Vercel will build with Turbopack.
+
+## Notes
+- Path aliases use `src/` imports.
+- Some UI relies on client components; avoid SSR/CSR mismatches by favoring responsive CSS over runtime media queries for size-only changes.
+
+## License
+No license specified. Add one if you plan to open-source.
