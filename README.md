@@ -1,6 +1,4 @@
-# My Portfolio (Next.js)
-
-A personal portfolio built with Next.js App Router, React, Material UI (MUI), Redux Toolkit, slick carousel, and video.js. The site includes cinematic hero sections, a Projects page with desktop sliders and a mobile-friendly stacked view, and tunable UI behaviors.
+![MyPortfolio](https://socialify.git.ci/YagmurCemGul/MyPortfolio/image?custom_description=A+personal+portfolio+using+Next.js+App+Router+%2815%29%2C+React+19%2C+MUI%2C+Redux+Toolkit%2C+slick-carousel%2C+and+video.js.+Features+a+cinematic+hero%2C+a+Projects+page+with+desktop+sliders+and+a+mobile+stacked+layout%2C+plus+globally+tunable+UI+behaviors.&custom_language=JavaScript&description=1&font=Rokkitt&forks=1&issues=1&language=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Light)
 
 ## Quick Start
 
