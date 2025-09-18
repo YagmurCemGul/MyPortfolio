@@ -4,8 +4,6 @@
 
 > Cinematic, Netflix-inspired storytelling site built with Next.js App Router, Material UI, Redux Toolkit, slick sliders, and custom audio orchestration.
 
-![Home screen](./public/assets/home-page.png)
-
 ## :sparkles: Highlights
 - Interactive intro that mirrors the Netflix splash, unlocks audio on first gesture, and routes visitors into curated personas
 - Persona-aware dashboard that persists the selected profile and steers visitors toward tailored routes such as `/projects`, `/stalker`, and `/adventurer`
