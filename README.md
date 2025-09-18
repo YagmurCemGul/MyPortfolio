@@ -1,84 +1,86 @@
 ![MyPortfolio](https://socialify.git.ci/YagmurCemGul/MyPortfolio/image?custom_description=A+personal+portfolio+using+Next.js+App+Router+%2815%29%2C+React+19%2C+MUI%2C+Redux+Toolkit%2C+slick-carousel%2C+and+video.js.+Features+a+cinematic+hero%2C+a+Projects+page+with+desktop+sliders+and+a+mobile+stacked+layout%2C+plus+globally+tunable+UI+behaviors.&custom_language=JavaScript&description=1&font=Rokkitt&forks=1&issues=1&language=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Light)
 
-## Quick Start
+# Netflix-Style Portfolio
 
-- Node: 18+ (Next 15 / React 19)
-- Install: `pnpm i` or `yarn` or `npm i`
-- Dev: `pnpm dev` (or `npm run dev`) — runs Next with Turbopack
-- Build: `pnpm build`
-- Start: `pnpm start`
+> Cinematic, Netflix-inspired storytelling site built with Next.js App Router, Material UI, Redux Toolkit, slick sliders, and custom audio orchestration.
 
-Scripts live in `package.json`.
+![Home screen](./public/assets/home-page.png)
 
-## Environment Variables
+## :sparkles: Highlights
+- Interactive intro that mirrors the Netflix splash, unlocks audio on first gesture, and routes visitors into curated personas
+- Persona-aware dashboard that persists the selected profile and steers visitors toward tailored routes such as `/projects`, `/stalker`, and `/adventurer`
+- Projects page with synchronized desktop carousels and mobile stacks, TMDB-style metadata, and a search bus that opens richly formatted detail cards
+- Detail modal pipeline with `SoundProvider` toggles, Hero CTAs (`PlayButton`, `AgeLimitChip`, `QualityChip`), and GSAP-ready transitions for a cinematic feel
+- Among Us inspired "Stalker" experience featuring star fields rendered client-side, timed lettering animations, and deferred audio playback
 
-Create a `.env.local` in `my-portfolio` with:
+## :building_construction: Tech Stack
+- Next.js 15 (App Router) on React 19 and TypeScript 5
+- Material UI 5 with Emotion theming, custom typography via `next/font`, and PillNav shell navigation
+- Redux Toolkit store, RTK Query-style slices, and context providers (`DetailModalProvider`, `SoundProvider`) for UI state sharing
+- Slick Carousel + custom pagination HOC, GSAP, Framer Motion, and tsparticles for motion design
+- Video.js with YouTube plugin for embedded trailers and media playback
 
-- `NEXT_PUBLIC_TMDB_V3_API_KEY` — TMDB API key (used by discover slices)
-- `NEXT_PUBLIC_API_ENDPOINT_URL` — optional API base if needed
+## :rocket: Quick Start
+1. Node 18 or newer (Turbopack requires the modern runtime)
+2. Install dependencies: `pnpm install` (or `npm install` / `yarn`)
+3. Run the dev server: `pnpm dev` (Next.js with Turbopack)
+4. Build for production: `pnpm build`
+5. Start the production server: `pnpm start`
 
-Constants are read in `src/constant/index.ts`.
+### Environment Variables
+Create `.env.local` in `my-portfolio` with the keys you need:
+- `NEXT_PUBLIC_TMDB_V3_API_KEY` - optional, enables TMDB fetches alongside local overrides
+- `NEXT_PUBLIC_API_ENDPOINT_URL` - optional remote data source if you externalize content
 
-## Project Structure (selected)
+## :gear: Useful Scripts
+- `pnpm dev` - start the Next.js dev server with Turbopack
+- `pnpm build` - production build
+- `pnpm start` - serve the production output
+- `pnpm lint` - run ESLint across the project
 
-- `src/app` — App Router pages and layouts
-  - `layout.tsx` — global metadata, providers, theme registry
-  - `projects/page.tsx` — Projects view (desktop sliders, mobile stacked)
-  - `favicon.ico` — default favicon picked up by Next
-- `src/components` — UI components (HeroSection, DetailModal, Header, etc.)
-- `src/store` — Redux Toolkit slices and RTK Query endpoints
-- `src/constant` — shared constants
-  - `index.ts` — base constants
-  - `uiTweaks.ts` — central UI tuning (read-more timing, header gaps)
-- `public/` — static assets (also supports `public/favicon.ico`)
+## :file_folder: Project Structure
+```text
+src/
+  app/                 # Next.js App Router routes (intro, accounts, projects, stalker, etc.)
+  components/          # Reusable UI: HeroSection, DetailModal, InlineDetailCard, PillNav
+  constant/            # UI tuning knobs (read more timing, header spacing)
+  data/                # `myProjects.ts` - TMDB-like metadata powering carousels & detail cards
+  hoc/withPagination/  # Slick slider wrapper that injects TMDB fetch + pagination state
+  providers/           # Cross-cutting providers: detail modal, portals, audio
+  store/               # Redux Toolkit slices, async thunks, and store bootstrap
+  utils/               # Helpers for formatting durations, building media links, sounds
+public/assets/         # Screens, gifs, audio cues used across the experience
+```
 
-## Key Features & Tuning
+## :compass: Key Modules
+- `src/app/layout.tsx` - wraps the tree with Redux, Material UI registry, custom fonts, and preloaded audio assets
+- `src/app/intro/page.tsx` - handles the Netflix-style splash, audio autoplay policies, and timed redirect to accounts
+- `src/app/projects/page.tsx` - orchestrates hero banners, section sliders, mobile stacks, and global search events
+- `src/data/myProjects.ts` - single source of truth for project blurbs, skills, gifs, and outbound links
+- `src/providers/SoundProvider.tsx` - central audio toggler that synchronizes hero background soundtracks and modals
+- `src/components/slick-slider/SlickSlider.tsx` - carousel shell with custom navigation injected by `withPagination`
+- `src/components/DetailModal.tsx` - responsive detail drawer/modal with read-more gradients and CTA stack
 
-### Projects Page
-- Desktop: section sliders via `withPagination(SlickSlider, ...)` in `src/app/projects/page.tsx`.
-- Mobile: stacked inline detail cards (`InlineDetailCard`) rendered under section headers.
+## :bar_chart: Data-Driven Content
+The site leans on TMDB-inspired metadata. Update `src/data/myProjects.ts` to adjust sections, copy, GIF backdrops, external links, and skill tags. Overrides funnel into both the carousel cards and the inline mobile cards, so updates stay consistent across layouts.
 
-### Read more / Read less
-- Desktop modal: smooth open downward using `max-height`, no upward jump.
-- Mobile stacked cards: same approach, with a gentle gradient fade.
-- Tune globally in `src/constant/uiTweaks.ts`:
-  - `UI_TWEAKS.readMore.desktop.openTransition`
-  - `UI_TWEAKS.readMore.desktop.closeTransition`
-  - `UI_TWEAKS.readMore.mobile.openTransition`
-  - `UI_TWEAKS.readMore.mobile.closeTransition`
-  - Toggle visibility/underline with `UI_TWEAKS.readMore.*.show/underline`.
+## :camera_flash: Screens & Motion
+- `./public/assets/home-page.png` - landing hero
+- `./public/assets/detail-modal.png` - detail modal with CTA stack
+- `./public/assets/grid-genre.png` - desktop slider grid
+- `./public/assets/mini-portal.png` - persona chooser
+- `./public/assets/watch.png` - watch detail view
 
-Relevant files:
-- Desktop modal: `src/components/DetailModal.tsx`
-- Mobile stacked: `src/components/InlineDetailCard.tsx`
+## :triangular_flag_on_post: Deployment Tips
+- Vercel-friendly configuration via `vercel.json` and `next.config.ts`
+- Ensure environment variables exist in your hosting provider (TMDB key, API endpoints)
+- Swap the favicon by updating `src/app/favicon.ico` or `public/favicon.ico` before redeploying
 
-### Header spacing (Search ↔ Account)
-Adjust spacing specifically for the Projects page:
-- `src/constant/uiTweaks.ts`
-  - `projectsHeader.mobile.searchAccountGap`
-  - `projectsHeader.mobile.accountRightMargin`
-  - `projectsHeader.desktop.searchAccountGap`
-  - `projectsHeader.desktop.accountRightMargin`
-Used in `src/components/layouts/MainHeader.tsx`.
+## :construction: Roadmap Ideas
+- Add automated snapshot tests for the hero, projects carousel, and detail modal states
+- Layer in lazy TMDB fetches once an API key is available to blend live data with handcrafted narratives
+- Expand persona-specific dashboards (developer vs recruiter) with tailored CTAs or analytics
 
-### Hero buttons and maturity badge sizing
-- Responsive sizing applied in `src/components/HeroSection.tsx` so mobile `/projects` shows smaller buttons and `18+` badge.
-- `src/components/MaturityRate.tsx` supports `sx` overrides.
+## :memo: License
+No open-source license specified. Add one before publishing the repository.
 
-## Favicon
-Next picks the favicon from either of:
-- `src/app/favicon.ico` (preferred in App Router)
-- `public/favicon.ico`
-
-Replace either file and redeploy. If browsers cache the old icon, hard-refresh (Cmd/Ctrl+Shift+R) or bump the filename and reference via metadata `icons` if needed.
-
-## Deployment (Vercel)
-- Ensure env vars are set in the Vercel project (especially `NEXT_PUBLIC_TMDB_V3_API_KEY`).
-- Push to your Git provider; Vercel will build with Turbopack.
-
-## Notes
-- Path aliases use `src/` imports.
-- Some UI relies on client components; avoid SSR/CSR mismatches by favoring responsive CSS over runtime media queries for size-only changes.
-
-## License
-No license specified. Add one if you plan to open-source.
